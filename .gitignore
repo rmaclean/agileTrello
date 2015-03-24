@@ -15,6 +15,7 @@ build/
 bld/
 [Bb]in/
 [Oo]bj/
+[node_modules]/
 
 # Roslyn cache directories
 *.ide/
@@ -188,3 +189,7 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+/agileTrello/lib/*/
+all.min.js.map
+all.min.js
+/agileTrello/node_modules/
