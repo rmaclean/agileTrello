@@ -1,0 +1,25 @@
+﻿<a ng-click="loginToTrello()" href="">
+Login
+</a>
+<div ng-show="loadingBoards">Loading</div>
+<h1>Boards</h1>
+<div ng-repeat="board in boards">
+    <a href="" ng-click="loadBoard(board.id)">{{board.name}}</a>
+</div>
+<h1>Lists</h1>
+<table>
+    <thead>
+        <tr>
+            <th>name</th>
+            <th>estimate</th>
+            <th>used</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="list in lists">
+            <td>{{list.name}}</td>
+            <td>{{list.estimate}}</td>
+            <td>{{list.used}}</td>
+        </tr>
+    </tbody>
+</table>
