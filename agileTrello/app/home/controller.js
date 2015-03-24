@@ -11,6 +11,7 @@
         $scope.loadingBoards = false;
         $scope.lists = [];
         $scope.authenticated = false;
+        $scope.selectedBoard = null;
 
         var key = "bb052cd140194b3333e4661db7d4afe9";
 
@@ -67,22 +68,20 @@
             });
         };
 
-        $scope.loadBoard = function (id) {
-            var token = localStorageService.get("trelloToken");
-            $http.get("https://api.trello.com/1/boards/" + id + "?lists=open&key=" + key + "&token=" + token).success(function (data) {
-                gotLists(data);
-            });
-        };
-
         function gotAuthWindowMessage(event) {
             if (!event.data) {
                 return;
             }
 
             localStorageService.set("trelloToken", event.data);
-            $scope.authenticated = !event.data;
+            $scope.authenticated = !!event.data;
             event.source.close();
             onAuth();
+        }
+
+        $scope.logout = function () {
+            localStorageService.remove("trelloToken");
+            $scope.authenticated = false;
         }
 
         $scope.loginToTrello = function () {
@@ -95,7 +94,18 @@
             window.open(url, "trelloPopup", "location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no,width=" + width + ",height=" + height + ",left=" + left + ",top=" + top);
         };
 
-        $scope.authenticated = !localStorageService.get("trelloToken");
+        $scope.$watch("selectedBoard", function () {
+            if ($scope === null || $scope.selectedBoard === null) {
+                return;
+            }
+
+            var token = localStorageService.get("trelloToken");
+            $http.get("https://api.trello.com/1/boards/" + $scope.selectedBoard.id + "?lists=open&key=" + key + "&token=" + token).success(function (data) {
+                gotLists(data);
+            });
+        });
+
+        $scope.authenticated = !!localStorageService.get("trelloToken");
         if ($scope.authenticated) {
             onAuth();
         }
