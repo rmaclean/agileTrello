@@ -14,8 +14,6 @@
         $scope.selectedBoard = null;
 
         var config = {};
-        var listInfos = [];
-        var listCount = 0;
         var identifyEstimateRegEx = /\(([\d\.]+)\)/;
         var identifyUsedRegEx = /.\[([\d\.]+)\]/;
         var identifySprintTitles = /^Sprint\s(\d+)(\s\(planned\s(\d+)\))?/;
@@ -53,82 +51,7 @@
             return result;
         }
 
-        function gotSingleList(list) {
-            var listInfo = {
-                name: list.name,
-                id: list.id,
-                estimate: 0,
-                used: 0,
-                cards: [],
-                difference: 0,
-                position: list.pos,
-                info: {
-                    unexpectedCards: 0,
-                    unexpectedWork: 0,
-                }
-            };
-
-            var sprintTitleInfo = identifySprintTitles.exec(list.name);
-            if (sprintTitleInfo) {
-                listInfo.info.planned = sprintTitleInfo[3];
-                listInfo.info.sprintNumber = sprintTitleInfo[1];
-            }
-
-            list.cards.forEach(function (card) {
-                if (card.name === "agileTrello Config") {
-                    config = JSON.parse(card.desc);
-                    return;
-                };
-
-                var cardInfo = {
-                    name: card.name,
-                    estimate: 0,
-                    used: 0,
-                    position: card.pos,
-                    url: card.url,
-                    members: setMembers(card.idMembers)
-                };
-
-                var estimates = identifyEstimateRegEx.exec(card.name);
-                if (estimates !== null) {
-                    listInfo.estimate += +estimates[1];
-                    cardInfo.estimate = +estimates[1];
-                }
-
-                var useds = identifyUsedRegEx.exec(card.name);
-                if (useds !== null) {
-                    listInfo.used += +useds[1];
-                    cardInfo.used += +useds[1];
-                }
-
-                if (cardInfo.estimate === 0 && cardInfo.used > 0) {
-                    listInfo.info.unexpectedCards++;
-                    listInfo.info.unexpectedWork += cardInfo.used;
-                }
-
-                cardInfo.difference = card.used - card.estimate;
-                listInfo.cards.push(cardInfo);
-            });
-
-            listInfo.cards.sort(function (a, b) {
-                return a.position - b.position;
-            });
-
-            listInfo.info.cards = list.cards.length;
-            listInfo.info.avgEstimate = listInfo.estimate / list.cards.length;
-            listInfo.info.avgUsed = listInfo.used / list.cards.length;
-
-            listInfo.difference = listInfo.used - listInfo.estimate;
-            listInfos.push(listInfo);
-            listsDone();
-        };
-
-        function listsDone() {
-            listCount--;
-            if (listCount !== 0) {
-                return;
-            }
-
+        function listsDone(listInfos) {
             if (config.hideDoubleZero) {
                 listInfos.forEach(function (list) {
                     if (list.estimate === 0 && list.used === 0) {
@@ -136,6 +59,19 @@
                     }
                 });
             }
+
+            var max = 0;
+            listInfos.forEach(function (list) {
+                list.cards.sort(function (a, b) {
+                    return a.position - b.position;
+                });
+
+                list.info.cards = list.cards.length;
+                list.info.avgEstimate = list.estimate / list.cards.length;
+                list.info.avgUsed = list.used / list.cards.length;
+
+                max = list.cards.length > max ? list.cards.length : max;
+            });
 
             if (config.cleanCardTitles) {
                 listInfos.forEach(function (list) {
@@ -171,34 +107,104 @@
 
             listInfos.sort(function (a, b) {
                 return a.position - b.position;
-            });
-
-            var max = 0;
-            listInfos.forEach(function (list) {
-                max = list.cards.length > max ? list.cards.length : max;
-            });
+            });                     
 
             var rows = [];
             for (var i = 0; i < max; i++) {
                 rows.push(i);
-            }
+            } 
 
             $scope.lists.lists = listInfos;
             $scope.lists.rows = rows;
         }
 
-        function gotMembers(membersFromAPI) {
-            members = membersFromAPI;
-            $trello.get("boards/" + $scope.selectedBoard.id + "?lists=open", gotLists);
+        function processList(list) {
+            var listInfo = {
+                name: list.name,
+                id: list.id,
+                estimate: 0,
+                used: 0,
+                cards: [],
+                difference: 0,
+                position: list.pos,
+                info: {
+                    unexpectedCards: 0,
+                    unexpectedWork: 0,
+                }
+            };
+
+            var sprintTitleInfo = identifySprintTitles.exec(list.name);
+            if (sprintTitleInfo) {
+                listInfo.info.planned = sprintTitleInfo[3];
+                listInfo.info.sprintNumber = sprintTitleInfo[1];
+            }
+
+            listInfo.difference = listInfo.used - listInfo.estimate;
+            return listInfo;
         }
 
-        function gotLists(board) {
-            listInfos = [];
-            board.lists.forEach(function (list) {
-                listCount++;
-                $trello.get("list/" + list.id + "?cards=open", gotSingleList);
+        function processCard(lists, card) {
+            var list = null;
+            lists.forEach(function (_list) {
+                if (_list.id === card.idList) {
+                    list = _list;
+                    return;
+                }
             });
-        };
+
+            if (list === null) {
+                return;
+            }
+
+            if (card.name === "agileTrello Config") {
+                config = JSON.parse(card.desc);
+                return;
+            };
+
+            var cardInfo = {
+                name: card.name,
+                estimate: 0,
+                used: 0,
+                position: card.pos,
+                url: card.url,
+                members: setMembers(card.idMembers)
+            };
+
+            var estimates = identifyEstimateRegEx.exec(card.name);
+            if (estimates !== null) {
+                list.estimate += +estimates[1];
+                cardInfo.estimate = +estimates[1];
+            }
+
+            var useds = identifyUsedRegEx.exec(card.name);
+            if (useds !== null) {
+                list.used += +useds[1];
+                cardInfo.used += +useds[1];
+            }
+
+            if (cardInfo.estimate === 0 && cardInfo.used > 0) {
+                list.info.unexpectedCards++;
+                list.info.unexpectedWork += cardInfo.used;
+            }
+
+            cardInfo.difference = card.used - card.estimate;
+            list.cards.push(cardInfo);
+        }
+
+        function gotBoard(board) {
+            members = board.members;
+
+            var listInfos = [];
+            board.lists.forEach(function (list) {
+                listInfos.push(processList(list));
+            });
+
+            board.cards.forEach(function (card) {
+                processCard(listInfos, card);
+            });
+
+            listsDone(listInfos);
+        }
 
         $scope.logout = function () {
             $trello.logout();
@@ -214,7 +220,7 @@
             }
 
             config = {};
-            $trello.get("boards/" + $scope.selectedBoard.id + "/members?fields=fullName,avatarHash,url", gotMembers);
+            $trello.get("/boards/" + $scope.selectedBoard.id + "?fields=name&cards=open&card_fields=idList,url,pos,name,idMembers,desc&members=all&member_fields=fullName,url&lists=open&actions=updateCard&list_fields=name,pos", gotBoard);
         });
 
         $trello.info.key = "bb052cd140194b3333e4661db7d4afe9";
