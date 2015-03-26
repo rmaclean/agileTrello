@@ -63,6 +63,9 @@
     <Content Include="app\home\controller.js" />
     <Content Include="app\home\view.html" />
     <None Include="bower.json" />
+    <Content Include="app\modules\atTrello.js" />
+    <Content Include="app\directives\agileBadges.html" />
+    <Content Include="content\site.css" />
     <Content Include="gruntfile.js" />
     <Content Include="index.html" />
     <Content Include="lib\all.min.js" />
@@ -71,13 +74,18 @@
     <Content Include="lib\angular\angular.js" />
     <Content Include="lib\bootstrap-css\bootstrap.min.css" />
     <Content Include="lib\bootstrap-css\bootstrap.min.js" />
+    <Content Include="lib\moment\moment.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="content\site.less" />
     <None Include="package.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="app\directives\agileBadges.js" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

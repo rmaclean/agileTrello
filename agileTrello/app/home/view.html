@@ -6,8 +6,8 @@
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li ng-show="!authenticated"><a ng-click="loginToTrello()" href="">Login to Trello</a></li>
-                <li ng-show="authenticated"><a ng-click="logout()" href="">Logout</a></li>
+                <li ng-show="!trello.authenticated"><a ng-click="loginToTrello()" href="">Login to Trello</a></li>
+                <li ng-show="trello.authenticated"><a ng-click="logout()" href="">Logout</a></li>
             </ul>
         </div>
     </div>
@@ -16,11 +16,11 @@
 <div class="row">
     <div class="col-md-12">
         <h1>Welcome</h1>
-        <p ng-show="authenticated">To get started select the board you want to get information for below.</p>
-        <p ng-show="!authenticated">You need to sign-in above to get started.</p>
+        <p ng-show="trello.authenticated">To get started select the board you want to get information for below.</p>
+        <p ng-show="!trello.authenticated">You need to sign-in above to get started.</p>
     </div>
 </div>
-<div class="row" ng-show="authenticated">   
+<div class="row" ng-show="trello.authenticated">
     <div class="col-md-12">
         <div class="form-group">
             <label for="board">Board</label>
@@ -28,21 +28,37 @@
         </div>
     </div>
 </div>
-<div class="row" ng-show="authenticated">
+<div class="row" ng-show="trello.authenticated">
     <div class="col-md-12">
-        <table class="table table-striped table-bordered table-hover table-responsive">
+        <table class="table table-striped table-bordered table-hover sprintTable">
             <thead>
                 <tr>
-                    <th>name</th>
-                    <th>estimate</th>
-                    <th>used</th>
+                    <th ng-repeat="list in lists.lists"><at-witbadge info="list"></at-witbadge> {{list.name}}</th>
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="list in lists">
-                    <td>{{list.name}}</td>
-                    <td>{{list.estimate}}</td>
-                    <td>{{list.used}}</td>
+                <tr>
+                    <td ng-repeat="list in lists.lists">
+                        <table class="table table-striped table-hover infoBlock">
+                            <tbody>
+                                <tr><td>Cards</td><td>{{list.info.cards | number:0}}</td></tr>
+                                <tr><td>Planned</td><td>{{list.info.planned | number:2}}</td></tr>
+                                <tr><td>Avg. Estimate</td><td>{{list.info.avgEstimate | number:2}}</td></tr>
+                                <tr><td>Avg. Used</td><td>{{list.info.avgUsed | number:2}}</td></tr>
+                                <tr><td>Points per day estimate</td><td>{{list.info.pointsPerDayEstimate | number:2}}</td></tr>
+                                <tr><td>Points per day used</td><td>{{list.info.pointsPerDayUsed | number:2}}</td></tr>
+                                <tr><td>Unexpected cards</td><td>{{list.info.unexpectedCards | number:0}}</td></tr>
+                                <tr><td>Unexpected points</td><td>{{list.info.unexpectedWork | number:2}}</td></tr>
+                                <tr><td>Date</td><td>{{list.info.sprintStartDate}} - {{list.info.sprintEndDate}}</td></tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr ng-repeat="row in lists.rows">
+                    <td ng-repeat="list in lists.lists">
+                        <at-witbadge info="list.cards[row]"></at-witbadge><div><a target="_blank" href="{{list.cards[row].url}}">{{list.cards[row].name}}</a></div>
+                        <div><div ng-repeat="member in list.cards[row].members"><small><a class="teamMember" href="{{member.url}}" target="_blank">{{member.fullName}}</a></small></div></div>
+                    </td>
                 </tr>
             </tbody>
         </table>
