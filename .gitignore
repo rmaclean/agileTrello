@@ -189,8 +189,11 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
-/agileTrello/lib/*/
-all.min.js.map
-all.min.js
+
 /agileTrello/node_modules/
 /.vs/config
+/agileTrello/lib/angular
+/agileTrello/lib/angular-local-storage
+/agileTrello/lib/angular-route
+/agileTrello/lib/bootstrap-css
+/agileTrello/lib/moment
