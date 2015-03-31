@@ -1,5 +1,15 @@
 ﻿@linkColour: #4174ba;
 @teamMemberLinkColour: #4d90ed;
+@estimatedColour: #ae8bf1;
+@usedColour: #f18bbd;
+@subtleFontColour: #b5b5b5;
+@green: #69b769;
+@red: #e05f5f;
+@fontColour: #535353;
+
+body {
+    color: @fontColour;
+}
 
 a {
     color: @linkColour;
@@ -19,11 +29,11 @@ a.teamMember:hover {
 
 .badge {
     &Estimate {
-        background-color: #ae8bf1;
+        background-color: @estimatedColour;
     }
 
     &Used {
-        background-color: #f18bbd;
+        background-color: @usedColour;
     }
 }
 
@@ -31,19 +41,44 @@ a.teamMember:hover {
     float: right;
 }
 
-table.sprintTable th,
-table.sprintTable td {
-    max-width: 270px;
-    min-width: 270px;
+.date {
+    font-size: x-small;
+    color: @subtleFontColour;
 }
 
 table.infoBlock {
-    max-width: 120px;
-    min-width: 120px;
-
     tr td {
         padding-right: 10px;
-        max-width: 120px;
-        min-width: 120px;
+        font-size: small;
+    }
+
+    .infoBlockTitle {
+        font-size: x-small;
+        color: @subtleFontColour;
+    }
+
+    td.estimated {
+        color: @estimatedColour;
+    }
+
+    td.used {
+        color: @usedColour;
+    }
+
+    td.green {
+        color: @green;
+    }
+
+    td.red {
+        color: @red;
+    }
+}
+
+.iconButton {
+    margin-left: 10px;
+    margin-right: 10px;
+
+    &Refresh {
+        color: @green;
     }
 }

@@ -15,7 +15,7 @@
                 }
             };
 
-            function buildUrl(path) {
+            function buildUrl(path, params) {
                 if (path[0] !== '/') {
                     path = "/" + path;
                 }
@@ -28,7 +28,11 @@
                     auth = "?" + auth;
                 }
 
-                return _urlBase + _version + path + auth;
+                if (params && params[0] !== "&") {
+                    params = "&" + params;
+                }
+
+                return _urlBase + _version + path + auth + params;
             }
 
             function gotAuthWindowMessage(event) {
@@ -66,8 +70,8 @@
                 factory.info.authenticated = false;
             };
 
-            factory.get = function (path, data) {
-                var url = buildUrl(path);
+            factory.get = function (path, params, data) {
+                var url = buildUrl(path, params);
                 $http.get(url).success(function (_data) {
                     data(_data);
                 });

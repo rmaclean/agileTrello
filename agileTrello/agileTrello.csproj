@@ -20,6 +20,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -60,6 +61,7 @@
   <ItemGroup>
     <Content Include="app\all.min.js" />
     <Content Include="app\app.js" />
+    <Content Include="app\directives\triforce.js" />
     <Content Include="app\home\controller.js" />
     <Content Include="app\home\view.html" />
     <None Include="bower.json" />
@@ -74,11 +76,17 @@
     <Content Include="lib\angular\angular.js" />
     <Content Include="lib\bootstrap-css\bootstrap.min.css" />
     <Content Include="lib\bootstrap-css\bootstrap.min.js" />
+    <Content Include="lib\components-font-awesome\font-awesome.css" />
+    <Content Include="lib\components-font-awesome\fontawesome-webfont.svg" />
     <Content Include="lib\moment\moment.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="content\site.less" />
+    <Content Include="lib\components-font-awesome\font-awesome.scss" />
+    <Content Include="lib\components-font-awesome\fontawesome-webfont.eot" />
+    <Content Include="lib\components-font-awesome\fontawesome-webfont.ttf" />
+    <Content Include="lib\components-font-awesome\fontawesome-webfont.woff" />
     <None Include="package.json" />
   </ItemGroup>
   <ItemGroup>

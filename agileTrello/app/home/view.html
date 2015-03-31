@@ -24,7 +24,7 @@
     <div class="col-md-12">
         <div class="form-group">
             <label for="board">Board</label>
-            <select id="board" ng-options="board.name for board in boards" ng-model="selectedBoard"></select>
+            <select id="board" ng-options="board.name for board in boards" ng-model="selectedBoard"></select><i class="fa fa-refresh fa-lg iconButton iconButtonRefresh" ng-click="refresh()"></i>
         </div>
     </div>
 </div>
@@ -33,7 +33,10 @@
         <table class="table table-striped table-bordered table-hover sprintTable">
             <thead>
                 <tr>
-                    <th ng-repeat="list in lists.lists"><at-witbadge info="list"></at-witbadge> {{list.name}}</th>
+                    <th ng-repeat="list in lists.lists">
+                        <div>{{list.name}}</div>
+                        <div class="date">{{list.info.sprintStartDate}} - {{list.info.sprintEndDate}}</div>
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -41,15 +44,15 @@
                     <td ng-repeat="list in lists.lists">
                         <table class="table table-striped table-hover infoBlock">
                             <tbody>
-                                <tr><td>Cards</td><td>{{list.info.cards | number:0}}</td></tr>
-                                <tr><td>Planned</td><td>{{list.info.planned | number:2}}</td></tr>
-                                <tr><td>Avg. Estimate</td><td>{{list.info.avgEstimate | number:2}}</td></tr>
-                                <tr><td>Avg. Used</td><td>{{list.info.avgUsed | number:2}}</td></tr>
-                                <tr><td>Points per day estimate</td><td>{{list.info.pointsPerDayEstimate | number:2}}</td></tr>
-                                <tr><td>Points per day used</td><td>{{list.info.pointsPerDayUsed | number:2}}</td></tr>
-                                <tr><td>Unexpected cards</td><td>{{list.info.unexpectedCards | number:0}}</td></tr>
-                                <tr><td>Unexpected points</td><td>{{list.info.unexpectedWork | number:2}}</td></tr>
-                                <tr><td>Date</td><td>{{list.info.sprintStartDate}} - {{list.info.sprintEndDate}}</td></tr>
+                                <tr><td colspan="2" class="infoBlockTitle">Cards</td><td colspan="2">{{list.info.cards | number:0}}</td></tr>
+                                <tr><td>&nbsp;</td><td class="infoBlockTitle">Est.</td><td class="infoBlockTitle">Used</td><td class="infoBlockTitle">Diff.</td></tr>
+                                <tr><td class="infoBlockTitle">Sum</td><td class="estimated">{{list.estimate | number:2}}</td><td class="used">{{list.used | number:2}}</td><td class="triforce" triforceorder="positive" triforcevalue="{{list.info.difference}}">{{list.info.difference | number:2}}</td></tr>
+                                <tr><td class="infoBlockTitle">Average</td><td class="estimated">{{list.info.avgEstimate | number:2}}</td><td class="used">{{list.info.avgUsed | number:2}}</td><td class="triforce" triforceorder="positive" triforcevalue="{{list.info.avgDifference}}">{{list.info.avgDifference | number:2}}</td></tr>
+                                <tr><td class="infoBlockTitle">Per day</td><td class="estimated">{{list.info.pointsPerDayEstimate | number:2}}</td><td class="used">{{list.info.pointsPerDayUsed | number:2}}</td><td class="triforce" triforceorder="positive" triforcevalue="{{list.info.differencePerDay}}">{{list.info.differencePerDay | number:2}}</td></tr>
+                                <tr ng-hide="list.hide.planned"><td class="infoBlockTitle">&nbsp;</td><td class="infoBlockTitle">Total</td><td class="infoBlockTitle">No. Days</td><td class="infoBlockTitle">Per Day</td></tr>
+                                <tr ng-hide="list.hide.planned"><td class="infoBlockTitle">{{language.planned}}</td><td>{{list.info.planned | number:2}}</td><td>{{list.info.sprintLength}}</td><td class="triforce" triforceorder="positive" triforcevalue="{{list.info.pointsPerDayUsed - list.info.plannedPerDay}}">{{list.info.plannedPerDay | number:2}}</td></tr>
+                                <tr ng-hide="list.hide.unexpected"><td>&nbsp;</td><td class="infoBlockTitle">Cards</td><td class="infoBlockTitle">Points</td><td>&nbsp;</td></tr>
+                                <tr ng-hide="list.hide.unexpected"><td class="infoBlockTitle">Unexpected</td><td>{{list.info.unexpectedCards | number:0}}</td><td>{{list.info.unexpectedWork | number:2}}</td><td>&nbsp;</td></tr>
                             </tbody>
                         </table>
                     </td>

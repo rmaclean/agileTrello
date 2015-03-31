@@ -12,6 +12,9 @@
         $scope.lists = {};
         $scope.trello = $trello.info;
         $scope.selectedBoard = null;
+        $scope.language = {
+            planned: "Planned"
+        };
 
         var config = {};
         var identifyEstimateRegEx = /\(([\d\.]+)\)/;
@@ -19,10 +22,16 @@
         var identifySprintTitles = /^Sprint\s(\d+)(\s\(planned\s(\d+)\))?/;
         var identifySprintTitlePlanned = /\(planned\s(\d+)\)/;
         var members = [];
+        var listInfos = [];
+        var actionsCount = 0;
+
+        $scope.refresh = function () {
+            loadBoard();
+        }
 
         function onAuth() {
             $scope.loadingBoards = true;
-            $trello.get("members/me/boards", gotBoards);
+            $trello.get("members/me/boards", "", gotBoards);
         };
 
         function gotBoards(boards) {
@@ -52,6 +61,10 @@
         }
 
         function listsDone(listInfos) {
+            if (config.languagePlanned) {
+                $scope.language.planned = config.languagePlanned;
+            }
+
             if (config.hideDoubleZero) {
                 listInfos.forEach(function (list) {
                     if (list.estimate === 0 && list.used === 0) {
@@ -69,6 +82,8 @@
                 list.info.cards = list.cards.length;
                 list.info.avgEstimate = list.estimate / list.cards.length;
                 list.info.avgUsed = list.used / list.cards.length;
+                list.info.difference = list.estimate - list.used;
+                list.info.avgDifference = list.info.avgEstimate - list.info.avgUsed;
 
                 max = list.cards.length > max ? list.cards.length : max;
             });
@@ -89,8 +104,11 @@
 
             if (config.sprintLength) {
                 listInfos.forEach(function (list) {
+                    list.info.plannedPerDay = list.info.planned / config.sprintLength;
+                    list.info.sprintLength = config.sprintLength;
                     list.info.pointsPerDayUsed = list.used / config.sprintLength;
                     list.info.pointsPerDayEstimate = list.estimate / config.sprintLength;
+                    list.info.differencePerDay = list.info.pointsPerDayEstimate - list.info.pointsPerDayUsed;
                 });
 
                 if (config.startDate) {
@@ -107,12 +125,12 @@
 
             listInfos.sort(function (a, b) {
                 return a.position - b.position;
-            });                     
+            });
 
             var rows = [];
             for (var i = 0; i < max; i++) {
                 rows.push(i);
-            } 
+            }
 
             $scope.lists.lists = listInfos;
             $scope.lists.rows = rows;
@@ -125,32 +143,82 @@
                 estimate: 0,
                 used: 0,
                 cards: [],
-                difference: 0,
                 position: list.pos,
                 info: {
                     unexpectedCards: 0,
                     unexpectedWork: 0,
-                }
+                },
+                hide: {
+                    planned: false,
+                    unexpected: false
+                },
+                dailyBreakdown: {}
             };
 
             var sprintTitleInfo = identifySprintTitles.exec(list.name);
             if (sprintTitleInfo) {
-                listInfo.info.planned = sprintTitleInfo[3];
+                if (sprintTitleInfo[3] === undefined) {
+                     listInfo.hide.planned = true;
+                } else {
+                    listInfo.info.planned = sprintTitleInfo[3];
+                }
+
                 listInfo.info.sprintNumber = sprintTitleInfo[1];
             }
 
-            listInfo.difference = listInfo.used - listInfo.estimate;
+            if (list.name.toLocaleUpperCase() == "BACKLOG") {
+                listInfo.hide.planned = true;
+                listInfo.hide.unexpected = true;
+            }
+
+            if (list.name.toLocaleUpperCase() == "SPRINT BACKLOG") {
+                listInfo.hide.planned = true;
+            }
+
+            if (list.name.toLocaleUpperCase() == "IN PROGRESS") {
+                listInfo.hide.planned = true;
+            }
+
             return listInfo;
         }
 
-        function processCard(lists, card) {
+        function getList(lists, id) {
             var list = null;
             lists.forEach(function (_list) {
-                if (_list.id === card.idList) {
+                if (_list.id === id) {
                     list = _list;
                     return;
                 }
             });
+
+            return list;
+        }
+
+        function getPoints(card) {
+            var points = {
+                validUsed: false,
+                validEstimate: false,
+                used: 0,
+                estimated: 0
+            };
+
+            var estimates = identifyEstimateRegEx.exec(card.name);
+            if (estimates !== null) {
+                points.validEstimate = true;
+                points.estimated = +estimates[1];
+            }
+
+            var useds = identifyUsedRegEx.exec(card.name);
+            if (useds !== null) {
+                points.validUsed = true;
+                points.used = +useds[1];
+            }
+
+            return points;
+        }
+
+        function processCard(lists, card) {
+            var list = getList(lists, card.idList);
 
             if (list === null) {
                 return;
@@ -170,16 +238,16 @@
                 members: setMembers(card.idMembers)
             };
 
-            var estimates = identifyEstimateRegEx.exec(card.name);
-            if (estimates !== null) {
-                list.estimate += +estimates[1];
-                cardInfo.estimate = +estimates[1];
+            var points = getPoints(card);
+
+            if (points.validEstimate) {
+                list.estimate += points.estimated;
+                cardInfo.estimate = points.estimated;
             }
 
-            var useds = identifyUsedRegEx.exec(card.name);
-            if (useds !== null) {
-                list.used += +useds[1];
-                cardInfo.used += +useds[1];
+            if (points.validUsed) {
+                list.used += points.used;
+                cardInfo.used = points.used;
             }
 
             if (cardInfo.estimate === 0 && cardInfo.used > 0) {
@@ -191,17 +259,96 @@
             list.cards.push(cardInfo);
         }
 
+        function getBreakdown(list, date) {
+            var breakDown = null;
+            for (var name in list.dailyBreakdown) {
+                if (list.dailyBreakdown.hasOwnProperty(name)) {
+                    if (name === date) {
+                        breakDown = list.dailyBreakdown[name];
+                        break;
+                    }
+                }
+            }
+
+            if (breakDown === null) {
+                breakDown = {
+                    used: 0,
+                    estimates: 0
+                };
+            }
+
+            return breakDown;
+        }
+
+        function processActions(lists, actions) {
+            actions.forEach(function (action) {
+                if (action.type === "createCard") {
+                    var points = getPoints(action.data.card);
+                    if (points.validEstimate || points.validUsed) {
+                        var list = getList(lists, action.data.list.id);
+                        if (list) {
+                            var date = (+moment(action.date).startOf("day")).toString();
+                            var breakDown = getBreakdown(list, date);
+                            if (points.validEstimate) {
+                                breakDown.estimates += points.estimated;
+                            }
+
+                            if (points.validUsed) {
+                                breakDown.used += points.used;
+                            }
+
+                            list.dailyBreakdown[date] = breakDown;
+                        }
+                    }
+                }
+            });
+        }
+
+        function getActions(actions) {
+            if (actions.length === 0) {
+                return;
+            }
+
+            actionsCount++;
+            $trello.get("/batch", "urls=" + actions, gotActions);
+        }
+
         function gotBoard(board) {
             members = board.members;
-
-            var listInfos = [];
+            listInfos = [];
             board.lists.forEach(function (list) {
                 listInfos.push(processList(list));
             });
 
+            actionsCount = 0;
+            var actions = "";
             board.cards.forEach(function (card) {
                 processCard(listInfos, card);
+
+                if (actions.length > 0) {
+                    actions += ",";
+                }
+
+                actions += "/cards/" + card.id + "/actions?filter=createCard%26limit=1000,/cards/" + card.id + "/actions?filter=updateCard%26limit=1000";
+                if (actions.length > 1800) {
+                    getActions(actions);
+                    actions = "";
+                }
             });
+
+            getActions(actions);
+        }
+
+        function gotActions(batchActions) {
+            actionsCount--;
+            if (actionsCount !== 0) {
+                return;
+            }
+
+            for (var cardIndex = 0; cardIndex < batchActions.length; cardIndex++) {
+                var actions = batchActions[cardIndex][200];
+                processActions(listInfos, actions);
+            }
 
             listsDone(listInfos);
         }
@@ -214,13 +361,19 @@
             $trello.login(onAuth);
         };
 
-        $scope.$watch("selectedBoard", function () {
+        function loadBoard() {
             if ($scope === null || $scope.selectedBoard === null) {
                 return;
             }
 
+            $scope.loadingBoards = true;
+            $scope.lists = {};
             config = {};
-            $trello.get("/boards/" + $scope.selectedBoard.id + "?fields=name&cards=open&card_fields=idList,url,pos,name,idMembers,desc&members=all&member_fields=fullName,url&lists=open&actions=updateCard&list_fields=name,pos", gotBoard);
+            $trello.get("/boards/" + $scope.selectedBoard.id, "fields=name&cards=open&card_fields=idList,url,pos,name,idMembers,desc&members=all&member_fields=fullName,url&lists=open&list_fields=name,pos", gotBoard);
+        }
+
+        $scope.$watch("selectedBoard", function () {
+            loadBoard();
         });
 
         $trello.info.key = "bb052cd140194b3333e4661db7d4afe9";
