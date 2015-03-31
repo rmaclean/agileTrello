@@ -5,6 +5,16 @@
     <link href="lib/bootstrap-css/bootstrap.min.css" rel="stylesheet" />
     <link href="content/site.css" rel="stylesheet" />
     <link href="lib/components-font-awesome/font-awesome.css" rel="stylesheet" />
+    <script type="text/javascript">
+    var appInsights=window.appInsights||function(config){
+        function s(config){t[config]=function(){var i=arguments;t.queue.push(function(){t[config].apply(t,i)})}}var t={config:config},r=document,f=window,e="script",o=r.createElement(e),i,u;for(o.src=config.url||"//az416426.vo.msecnd.net/scripts/a/ai.0.js",r.getElementsByTagName(e)[0].parentNode.appendChild(o),t.cookie=r.cookie,t.queue=[],i=["Event","Exception","Metric","PageView","Trace"];i.length;)s("track"+i.pop());return config.disableExceptionTracking||(i="onerror",s("_"+i),u=f[i],f[i]=function(config,r,f,e,o){var s=u&&u(config,r,f,e,o);return s!==!0&&t["_"+i](config,r,f,e,o),s}),t
+    }({
+        instrumentationKey:"13288f58-cea4-4f02-84bc-1f8dd753bcbc"
+    });
+
+    window.appInsights=appInsights;
+    appInsights.trackPageView();
+    </script>
 </head>
 <body ng-app="agileTrello">
     <div ng-view class="container-fluid"></div>

@@ -1,13 +1,14 @@
 ﻿<nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#home">agileTrello</a>
+            <a class="navbar-brand" href="#home">agileTrello</a>            
         </div>
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li ng-show="!trello.authenticated"><a ng-click="loginToTrello()" href="">Login to Trello</a></li>
                 <li ng-show="trello.authenticated"><a ng-click="logout()" href="">Logout</a></li>
+                <li><a target="_blank" href="https://github.com/rmaclean/agileTrello">Contribute</a></li>
             </ul>
         </div>
     </div>
