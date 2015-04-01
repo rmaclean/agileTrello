@@ -71,8 +71,14 @@
     <Content Include="gruntfile.js" />
     <Content Include="index.html" />
     <Content Include="lib\all.min.js" />
+    <Content Include="lib\angular-local-storage\angular-local-storage.js" />
+    <Content Include="lib\angular-route\angular-route.js" />
+    <Content Include="lib\angular\angular.js" />
+    <Content Include="lib\bootstrap-css\bootstrap.min.css" />
+    <Content Include="lib\bootstrap-css\bootstrap.min.js" />
     <Content Include="lib\components-font-awesome\font-awesome.css" />
     <Content Include="lib\components-font-awesome\fontawesome-webfont.svg" />
+    <Content Include="lib\moment\moment.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
