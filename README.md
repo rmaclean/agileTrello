@@ -1,8 +1,6 @@
 # agileTrello: know your pack size
 
-[![Build status](https://ci.appveyor.com/api/projects/status/a29x7lbjfglo7f8d/branch/master?svg=true)](https://ci.appveyor.com/project/rmaclean/agiletrello/branch/master)
-
-[Check it out](http://agiletrello.azurewebsites.net/)
+[Check it out, soon](http://agiletrello.azurewebsites.net/)
 
 Trello + Agile = Pain. It lacks time tracking & estimates. It has no agile features like burn downs. It doesn't even have reports :(
 
