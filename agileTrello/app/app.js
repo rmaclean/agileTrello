@@ -2,7 +2,7 @@
 (function () {
     'use strict';
 
-    var app = angular.module("agileTrello", ["ngRoute", "LocalStorageModule", "atTrello", "atWITBadges", "atTriforce"]);
+    var app = angular.module("agileTrello", ["ngRoute", "LocalStorageModule", "atTrello", "atWITBadges", "atTriforce", "n3-line-chart"]);
 
     app.config(['$routeProvider', function ($routeProvider) {
         var endOfController = window.location.hash.indexOf('/', 3);

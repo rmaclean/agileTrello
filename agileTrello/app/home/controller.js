@@ -16,6 +16,41 @@
             planned: "Planned"
         };
 
+        $scope.sprintUsageData = [];
+        $scope.sprintAvgData = [];
+        $scope.sprintPerDayData = [];
+
+        $scope.sprintUsageOptions = {
+            series: [
+              {
+                  y: "val_0",
+                  label: "Points Used",
+                  color: "#f18bbd",
+                  type: "area",
+                  axis: "y",
+                  id: "series_0",
+                  striped: true,
+              },
+              {
+                  y: "val_1",
+                  label: "Points Estimated",
+                  color: "#ae8bf1",
+                  type: "line",
+                  axis: "y",
+                  id: "series_1",
+                  striped: true,
+              }
+            ],
+            stacks: [],
+            axes: { x: { type: "linear", key: "x", labelFunction: function (value) { return "sprint " + +($scope.sprintUsageOptions.axes.x.ticks - value); } }, y: { type: "linear" } },
+            lineMode: "linear",
+            tension: 0.7,
+            tooltip: { mode: "scrubber" },
+            drawLegend: true,
+            drawDots: true,
+            columnsHGap: 5
+        };
+
         var config = {};
         var identifyEstimateRegEx = /\(([\d\.]+)\)/;
         var identifyUsedRegEx = /.\[([\d\.]+)\]/;
@@ -74,7 +109,7 @@
             }
 
             var max = 0;
-            listInfos.forEach(function (list) {
+            listInfos.forEach(function (list) {                
                 list.cards.sort(function (a, b) {
                     return a.position - b.position;
                 });
@@ -86,6 +121,23 @@
                 list.info.avgDifference = list.info.avgEstimate - list.info.avgUsed;
 
                 max = list.cards.length > max ? list.cards.length : max;
+
+                if (list.info.isSprintList) {
+                    $scope.sprintUsageData.push({
+                        x: $scope.sprintUsageData.length,
+                        val_0: list.used,
+                        val_1: list.estimate
+                    });
+
+                    $scope.sprintAvgData.push({
+                        x: $scope.sprintAvgData.length,
+                        val_0: list.info.avgUsed,
+                        val_1: list.info.avgEstimate
+                    });
+                }
+
+                $scope.sprintUsageOptions.axes.x.ticks = $scope.sprintUsageData.length;
+
             });
 
             if (config.cleanCardTitles) {
@@ -109,6 +161,14 @@
                     list.info.pointsPerDayUsed = list.used / config.sprintLength;
                     list.info.pointsPerDayEstimate = list.estimate / config.sprintLength;
                     list.info.differencePerDay = list.info.pointsPerDayEstimate - list.info.pointsPerDayUsed;
+
+                    if (list.info.isSprintList) {
+                        $scope.sprintPerDayData.push({
+                            x: $scope.sprintPerDayData.length,
+                            val_0: list.info.pointsPerDayUsed,
+                            val_1: list.info.pointsPerDayEstimate
+                        });
+                    }
                 });
 
                 if (config.startDate) {
@@ -147,23 +207,29 @@
                 info: {
                     unexpectedCards: 0,
                     unexpectedWork: 0,
+                    isSprintList: false
                 },
                 hide: {
                     planned: false,
                     unexpected: false
                 },
-                dailyBreakdown: {}
+                dailyBreakdown: {},
+
             };
 
             var sprintTitleInfo = identifySprintTitles.exec(list.name);
             if (sprintTitleInfo) {
                 if (sprintTitleInfo[3] === undefined) {
-                     listInfo.hide.planned = true;
+                    listInfo.hide.planned = true;
                 } else {
                     listInfo.info.planned = sprintTitleInfo[3];
                 }
 
-                listInfo.info.sprintNumber = sprintTitleInfo[1];
+                if (sprintTitleInfo[1] !== undefined) {
+
+                    listInfo.info.sprintNumber = sprintTitleInfo[1];
+                    listInfo.info.isSprintList = true;
+                }
             }
 
             if (list.name.toLocaleUpperCase() == "BACKLOG") {

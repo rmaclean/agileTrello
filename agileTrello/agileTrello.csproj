@@ -78,7 +78,9 @@
     <Content Include="lib\bootstrap-css\bootstrap.min.js" />
     <Content Include="lib\components-font-awesome\font-awesome.css" />
     <Content Include="lib\components-font-awesome\fontawesome-webfont.svg" />
+    <Content Include="lib\d3\d3.js" />
     <Content Include="lib\moment\moment.js" />
+    <Content Include="lib\n3-line-chart\line-chart.min.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -90,6 +92,7 @@
     <None Include="package.json" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="app\tests\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
