@@ -42,7 +42,7 @@
               }
             ],
             stacks: [],
-            axes: { x: { type: "linear", key: "x", labelFunction: function (value) { return "sprint " + +($scope.sprintUsageOptions.axes.x.ticks - value); } }, y: { type: "linear" } },
+            axes: { x: { type: "linear", key: "x", labelFunction: function (value) { return +($scope.sprintUsageOptions.axes.x.ticks - value); } }, y: { type: "linear" } },
             lineMode: "linear",
             tension: 0.7,
             tooltip: { mode: "scrubber" },
@@ -435,6 +435,10 @@
             $scope.loadingBoards = true;
             $scope.lists = {};
             config = {};
+            $scope.sprintUsageData = [];
+            $scope.sprintAvgData = [];
+            $scope.sprintPerDayData = [];
+
             $trello.get("/boards/" + $scope.selectedBoard.id, "fields=name&cards=open&card_fields=idList,url,pos,name,idMembers,desc&members=all&member_fields=fullName,url&lists=open&list_fields=name,pos", gotBoard);
         }
 

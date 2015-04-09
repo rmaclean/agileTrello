@@ -8,7 +8,8 @@
             <ul class="nav navbar-nav nav-pills">
                 <li ng-show="!trello.authenticated"><a ng-click="loginToTrello()" href="">Login to Trello</a></li>
                 <li ng-show="trello.authenticated"><a ng-click="logout()" href="">Logout</a></li>
-                <li><a target="_blank" href="https://github.com/rmaclean/agileTrello">Contribute</a></li>
+                <li><a target="_blank" href="https://trello.com/b/NCQhvlLr/agiletrello">Our backlog <i class="fa fa-external-link"></i></a></li>
+                <li><a target="_blank" href="https://github.com/rmaclean/agileTrello">Contribute <i class="fa fa-external-link"></i></a></li>
             </ul>
         </div>
     </div>
@@ -18,19 +19,22 @@
     <div class="col-md-12">
         <div class="form-group">
             <label for="board">Board</label>
-            <select id="board" ng-options="board.name for board in boards" ng-model="selectedBoard"></select><i class="fa fa-refresh fa-lg iconButton iconButtonRefresh" ng-click="refresh()"></i>
+            <select id="board" ng-options="board.name for board in boards" ng-model="selectedBoard"></select><i ng-show="trello.authenticated" class="fa fa-refresh fa-lg iconButton iconButtonRefresh" ng-click="refresh()"></i><i ng-show="trello.authenticated" class="fa fa-cogs fa-lg iconButton iconButtonRefresh"></i>
         </div>
     </div>
 </div>
 
 <div class="row" ng-show="trello.authenticated">
     <div class="col-md-3">
+        <div>Sum</div>
         <linechart data="sprintUsageData" options="sprintUsageOptions" height="200"></linechart>
     </div>
     <div class="col-md-3">
+        <div>Average</div>
         <linechart data="sprintAvgData" options="sprintUsageOptions" height="200"></linechart>
     </div>
     <div class="col-md-3">
+        <div>Per day</div>
         <linechart data="sprintPerDayData" options="sprintUsageOptions" height="200"></linechart>
     </div>
     <div class="col-md-3"></div>
