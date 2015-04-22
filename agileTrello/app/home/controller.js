@@ -16,41 +16,13 @@
             planned: "Planned"
         };
 
+        $scope.charts = [];
         $scope.sprintUsageData = [];
         $scope.sprintAvgData = [];
         $scope.sprintPerDayData = [];
-
-        $scope.sprintUsageOptions = {
-            series: [
-              {
-                  y: "val_0",
-                  label: "Points Used",
-                  color: "#f18bbd",
-                  type: "area",
-                  axis: "y",
-                  id: "series_0",
-                  striped: true,
-              },
-              {
-                  y: "val_1",
-                  label: "Points Estimated",
-                  color: "#ae8bf1",
-                  type: "line",
-                  axis: "y",
-                  id: "series_1",
-                  striped: true,
-              }
-            ],
-            stacks: [],
-            axes: { x: { type: "linear", key: "x", labelFunction: function (value) { return +($scope.sprintUsageOptions.axes.x.ticks - value); } }, y: { type: "linear" } },
-            lineMode: "linear",
-            tension: 0.7,
-            tooltip: { mode: "scrubber" },
-            drawLegend: true,
-            drawDots: true,
-            columnsHGap: 5
-        };
-
+        $scope.sprintUnexpectedData = [];
+        $scope.sprintDiffData = [];
+     
         var config = {};
         var identifyEstimateRegEx = /\(([\d\.]+)\)/;
         var identifyUsedRegEx = /.\[([\d\.]+)\]/;
@@ -109,7 +81,7 @@
             }
 
             var max = 0;
-            listInfos.forEach(function (list) {                
+            listInfos.forEach(function (list) {
                 list.cards.sort(function (a, b) {
                     return a.position - b.position;
                 });
@@ -127,6 +99,16 @@
                         x: $scope.sprintUsageData.length,
                         val_0: list.used,
                         val_1: list.estimate
+                    });
+
+                    $scope.sprintUnexpectedData.push({
+                        x: $scope.sprintUsageData.length,
+                        val_0: list.info.unexpectedWork,
+                    });
+
+                    $scope.sprintDiffData.push({
+                        x: $scope.sprintUsageData.length,
+                        val_0: list.info.difference,
                     });
 
                     $scope.sprintAvgData.push({
@@ -194,6 +176,7 @@
 
             $scope.lists.lists = listInfos;
             $scope.lists.rows = rows;
+            $scope.charts = homeCharts.charts();
         }
 
         function processList(list) {
@@ -438,6 +421,8 @@
             $scope.sprintUsageData = [];
             $scope.sprintAvgData = [];
             $scope.sprintPerDayData = [];
+            $scope.sprintUnexpectedData = [];
+            $scope.sprintDiffData = [];
 
             $trello.get("/boards/" + $scope.selectedBoard.id, "fields=name&cards=open&card_fields=idList,url,pos,name,idMembers,desc&members=all&member_fields=fullName,url&lists=open&list_fields=name,pos", gotBoard);
         }

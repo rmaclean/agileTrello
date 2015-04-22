@@ -62,6 +62,7 @@
     <Content Include="app\all.min.js" />
     <Content Include="app\app.js" />
     <Content Include="app\directives\triforce.js" />
+    <Content Include="app\home\charts.js" />
     <Content Include="app\home\controller.js" />
     <Content Include="app\home\view.html" />
     <None Include="bower.json" />
