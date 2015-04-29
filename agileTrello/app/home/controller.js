@@ -118,7 +118,7 @@
                     });
                 }
 
-                $scope.sprintUsageOptions.axes.x.ticks = $scope.sprintUsageData.length;
+                //$scope.sprintUsageOptions.axes.x.ticks = $scope.sprintUsageData.length;
 
             });
 
@@ -176,7 +176,7 @@
 
             $scope.lists.lists = listInfos;
             $scope.lists.rows = rows;
-            $scope.charts = homeCharts.charts();
+            homeCharts.charts($scope);
         }
 
         function processList(list) {

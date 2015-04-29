@@ -93,7 +93,6 @@
     <None Include="package.json" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="app\tests\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>

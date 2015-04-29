@@ -25,30 +25,10 @@
 </div>
 
 <div class="row" ng-show="trello.authenticated">
-    <div ng-repeat="chart in charts" class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-        <div>TBD</div>
-        <linechart options="chart" height="200"></linechart>
+    <div ng-repeat="chart in charts track by $index" class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+        <div>{{chart.label}}</div>
+        <linechart options="chart" data="chart.data" height="200"></linechart>
     </div>
-    <!--<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-        <div>Sum</div>
-        <linechart data="sprintUsageData" options="sprintUsageOptions" height="200"></linechart>
-    </div>
-    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-        <div>Average</div>
-        <linechart data="sprintAvgData" options="sprintUsageOptions" height="200"></linechart>
-    </div>
-    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-        <div>Per day</div>
-        <linechart data="sprintPerDayData" options="sprintUsageOptions" height="200"></linechart>
-    </div>
-    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-        <div>Unexpected</div>
-        <linechart data="sprintUnexpectedData" options="sprintUnexpectedOptions" height="200"></linechart>
-    </div>
-    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-        <div>Diff</div>
-        <linechart data="sprintDiffData" options="sprintDiffOptions" height="200"></linechart>
-    </div>-->
 </div>
 
 <div class="row" ng-show="trello.authenticated">
