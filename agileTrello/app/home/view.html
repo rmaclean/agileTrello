@@ -54,10 +54,10 @@
                                 <tr><td class="infoBlockTitle">Per day</td><td class="estimated">{{list.info.pointsPerDayEstimate | number:2}}</td><td class="used">{{list.info.pointsPerDayUsed | number:2}}</td><td class="triforce" triforceorder="positive" triforcevalue="{{list.info.differencePerDay}}">{{list.info.differencePerDay | number:2}}</td></tr>
                                 <tr ng-hide="list.hide.planned"><td class="infoBlockTitle">&nbsp;</td><td class="infoBlockTitle">Total</td><td class="infoBlockTitle">No. Days</td><td class="infoBlockTitle">Per Day</td></tr>
                                 <tr ng-hide="list.hide.planned"><td class="infoBlockTitle">{{language.planned}}</td><td>{{list.info.planned | number:2}}</td><td>{{list.info.sprintLength}}</td><td class="triforce" triforceorder="positive" triforcevalue="{{list.info.pointsPerDayUsed - list.info.plannedPerDay}}">{{list.info.plannedPerDay | number:2}}</td></tr>
-                                <tr ng-hide="list.hide.unexpected"><td class="infoBlockTitle" colspan="4"><h6 style="text-align:center">Unexpected</h6></td></tr>
+                                <tr ng-hide="list.hide.unexpected"><td>&nbsp;</td><td class="infoBlockTitle">Count</td><td class="infoBlockTitle" colspan="2">&nbsp;</td></tr>
+                                <tr ng-hide="list.hide.unexpected"><td class="infoBlockTitle">Unexpected Cards</td><td>{{list.info.unexpectedCards | number:0}}</td><td>&nbsp;</td><td>&nbsp;</td></tr>
                                 <tr ng-hide="list.hide.unexpected"><td>&nbsp;</td><td class="infoBlockTitle">Count</td><td class="infoBlockTitle">Avg</td><td class="infoBlockTitle">Used less unexpected</td></tr>
-                                <tr ng-hide="list.hide.unexpected"><td class="infoBlockTitle">Cards</td><td>{{list.info.unexpectedCards | number:0}}</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-                                <tr ng-hide="list.hide.unexpected"><td class="infoBlockTitle">Points</td><td>{{list.info.unexpectedWork | number:2}}</td><td>{{list.info.unexpectedWorkAvg | number:2}}</td><td class="used">{{list.info.unexpectedWorkDiffAdjusted | number : 2}}</td></tr>
+                                <tr ng-hide="list.hide.unexpected"><td class="infoBlockTitle">Unexpected Points</td><td>{{list.info.unexpectedWork | number:2}}</td><td>{{list.info.unexpectedWorkAvg | number:2}}</td><td class="used">{{list.info.unexpectedWorkDiffAdjusted | number : 2}}</td></tr>
                             </tbody>
                         </table>
                     </td>

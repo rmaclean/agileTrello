@@ -26,8 +26,8 @@
         var config = {};
         var identifyEstimateRegEx = /\(([\d\.]+)\)/;
         var identifyUsedRegEx = /.\[([\d\.]+)\]/;
-        var identifySprintTitles = /^Sprint\s(\d+)(\s\(planned\s(\d+)\))?/;
-        var identifySprintTitlePlanned = /\(planned\s(\d+)\)/;
+        var identifySprintTitles = /^Sprint\s(\d+)(\s\(planned\s(\d+(\.|,)?\d+)\))?/;
+        var identifySprintTitlePlanned = /\(planned\s(\d+(\.|,)?\d+)\)/;
         var members = [];
         var listInfos = [];
         var actionsCount = 0;
@@ -47,6 +47,18 @@
                 if (!board.closed) {
                     $scope.boards.push(board);
                 }
+            });
+
+            $scope.boards.sort(function (a, b) {
+                if (a.name.toUpperCase() < b.name.toUpperCase()) {
+                    return -1;
+                };
+
+                if (a.name.toUpperCase() > b.name.toUpperCase()) {
+                    return 1;
+                };
+
+                return 0;
             });
         }
 
@@ -303,7 +315,7 @@
 
             if (cardInfo.estimate === 0 && cardInfo.used > 0) {
                 list.info.unexpectedCards++;
-                list.info.unexpectedWork += cardInfo.used;                
+                list.info.unexpectedWork += cardInfo.used;
             }
 
             cardInfo.difference = card.used - card.estimate;
