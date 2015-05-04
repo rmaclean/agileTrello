@@ -22,7 +22,7 @@
         $scope.sprintPerDayData = [];
         $scope.sprintUnexpectedData = [];
         $scope.sprintDiffData = [];
-     
+
         var config = {};
         var identifyEstimateRegEx = /\(([\d\.]+)\)/;
         var identifyUsedRegEx = /.\[([\d\.]+)\]/;
@@ -91,6 +91,8 @@
                 list.info.avgUsed = list.used / list.cards.length;
                 list.info.difference = list.estimate - list.used;
                 list.info.avgDifference = list.info.avgEstimate - list.info.avgUsed;
+                list.info.unexpectedWorkAvg = list.info.unexpectedWork / list.info.unexpectedCards;
+                list.info.unexpectedWorkDiffAdjusted = list.used - list.info.unexpectedWork;
 
                 max = list.cards.length > max ? list.cards.length : max;
 
@@ -117,8 +119,6 @@
                         val_1: list.info.avgEstimate
                     });
                 }
-
-                //$scope.sprintUsageOptions.axes.x.ticks = $scope.sprintUsageData.length;
 
             });
 
@@ -190,6 +190,8 @@
                 info: {
                     unexpectedCards: 0,
                     unexpectedWork: 0,
+                    unexpectedWorkAvg: 0,
+                    unexpectedWorkDiffAdjusted: 0,
                     isSprintList: false
                 },
                 hide: {
@@ -301,7 +303,7 @@
 
             if (cardInfo.estimate === 0 && cardInfo.used > 0) {
                 list.info.unexpectedCards++;
-                list.info.unexpectedWork += cardInfo.used;
+                list.info.unexpectedWork += cardInfo.used;                
             }
 
             cardInfo.difference = card.used - card.estimate;

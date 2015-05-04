@@ -2,6 +2,7 @@
     'use strict';
     function defaultChart(chartLabel, seriesLabel, colour, data) {
         var result = {
+            data: data,
             options : {
                 label: chartLabel,
                 series: [
@@ -11,12 +12,12 @@
                         color: colour,
                         type: "area",
                         id: "series_0",
-                        striped: true,
+                        striped: false,
                     },
                 ],
-                axes: { x: { type: "linear", key: "x", labelFunction: function (value) { return +(this.ticks - value); } }, y: { type: "linear" } },
+                axes: { x: { type: "linear", key: "x", labelFunction: function (value) { return +(data.length - value); } }, y: { type: "linear" } },
+                columnsHGap: 1,
             },
-            data: data
         };
             
         return result; 
@@ -30,7 +31,7 @@
             type: "line",
             axis: "y",
             id: "series_1",
-            striped: true,
+            striped: false,
         });
     }
     
