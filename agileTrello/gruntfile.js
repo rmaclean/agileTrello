@@ -15,7 +15,7 @@ module.exports = function (grunt) {
         },
         copy: {
             fonts: {
-                files: [{
+                files: [{                   
                     expand: true,
                     flatten: true,
                     cwd: 'lib/components-font-awesome/',

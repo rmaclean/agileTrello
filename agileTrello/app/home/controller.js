@@ -1,4 +1,5 @@
-﻿/// <reference path="scripts/angular.js" />
+﻿/* global moment */
+/// <reference path="../../bower_components/angular/angular.js" />
 (function () {
     'use strict';
 
@@ -21,7 +22,7 @@
         $scope.sprintAvgData = [];
         $scope.sprintPerDayData = [];
         $scope.sprintUnexpectedData = [];
-        $scope.sprintDiffData = [];
+        $scope.sprintDiffData = [];                
 
         var config = {};
         var identifyEstimateRegEx = /\(([\d\.]+)\)/;
@@ -155,6 +156,9 @@
                     list.info.pointsPerDayUsed = list.used / config.sprintLength;
                     list.info.pointsPerDayEstimate = list.estimate / config.sprintLength;
                     list.info.differencePerDay = list.info.pointsPerDayEstimate - list.info.pointsPerDayUsed;
+                    list.info.estFromPlanned = list.estimate - list.info.planned;
+                    list.info.usedFromPlanned = list.used - list.info.planned;
+                    list.info.adjustedUsedFromPlanned = list.info.unexpectedWorkDiffAdjusted - list.info.planned;
 
                     if (list.info.isSprintList) {
                         $scope.sprintPerDayData.push({
