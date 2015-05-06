@@ -22,7 +22,7 @@
         $scope.sprintAvgData = [];
         $scope.sprintPerDayData = [];
         $scope.sprintUnexpectedData = [];
-        $scope.sprintDiffData = [];                
+        $scope.sprintDiffData = [];
 
         var config = {};
         var identifyEstimateRegEx = /\(([\d\.]+)\)/;
@@ -132,7 +132,6 @@
                         val_1: list.info.avgEstimate
                     });
                 }
-
             });
 
             if (config.cleanCardTitles) {
@@ -215,7 +214,6 @@
                     unexpected: false
                 },
                 dailyBreakdown: {},
-
             };
 
             var sprintTitleInfo = identifySprintTitles.exec(list.name);
@@ -227,7 +225,6 @@
                 }
 
                 if (sprintTitleInfo[1] !== undefined) {
-
                     listInfo.info.sprintNumber = sprintTitleInfo[1];
                     listInfo.info.isSprintList = true;
                 }
@@ -354,17 +351,19 @@
                     if (points.validEstimate || points.validUsed) {
                         var list = getList(lists, action.data.list.id);
                         if (list) {
-                            var date = (+moment(action.date).startOf("day")).toString();
-                            var breakDown = getBreakdown(list, date);
-                            if (points.validEstimate) {
-                                breakDown.estimates += points.estimated;
-                            }
+                            var actionDate = (+(moment(action.date).startOf("day"))).toString();
+                            if (actionDate) {
+                                var breakDown = getBreakdown(list, actionDate);
+                                if (points.validEstimate) {
+                                    breakDown.estimates += points.estimated;
+                                }
 
-                            if (points.validUsed) {
-                                breakDown.used += points.used;
-                            }
+                                if (points.validUsed) {
+                                    breakDown.used += points.used;
+                                }
 
-                            list.dailyBreakdown[date] = breakDown;
+                                list.dailyBreakdown[actionDate] = breakDown;
+                            }
                         }
                     }
                 }
